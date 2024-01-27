@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This package contains functions that merge survey data with external environmental data, such as chlorophyll A, photosynthetically active radiation (PAR), turbidity (Kd490), wave height, and sea surface temperature (SST). 
+This package lets you run Environmental Data Summary (EDS) that merges survey data with external environmental data, such as chlorophyll A, photosynthetically active radiation (PAR), turbidity (Kd490), wave height, and sea surface temperature (SST). 
 
 ## Installation
 
