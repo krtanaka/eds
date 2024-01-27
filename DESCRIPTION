@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Kisei", "Tanaka", , "kisei.tanaka@noaa.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-1901-6972"))
-Description: What the package does (one paragraph).
+Description: The EDS enables you to merge survey data with external environmental data, such as chlorophyll A, photosynthetically active radiation (PAR), turbidity (Kd490), wave height, and sea surface temperature (SST). The EDS tool is written in R and provides access to NOAA CoastWatch and OceanWatch datasets through the ERDDAP.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
