@@ -38,7 +38,6 @@ eds_parameter <- data.frame(
 write.csv(eds_parameter, file = file.path("/Users/", Sys.info()[7], "Desktop", "eds_parameters.csv"), row.names = FALSE)
 
 # Load example dataset (NCRMP 2010-2022)
-df <- readRDS("data/df.rda")
 df <- subset(df, region == "MHI")
 
 eds::run_eds(lon = df$lon,
