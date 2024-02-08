@@ -854,8 +854,9 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
             "points out of", nrow(df),
             "entered points due to being outside of the geographic scope.\n"))
 
-  df = subset(df, DATA_UNIT != "NONE_ASSIGNED")
-  df = df[!duplicated(df[c("lat", "lon", "date_r")]), ]
+df = subset(df, DATA_UNIT != "NONE_ASSIGNED")
+df = df[!(is.na(df$lat) & is.na(df$lon)) & !is.na(df$date_r), ]
+df = df[!duplicated(df[c("lat", "lon", "date_r")]), ]
 
   # List of spatial units
   unique_units = sort(unique(df$DATA_UNIT)); unique_units
