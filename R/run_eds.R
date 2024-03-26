@@ -522,7 +522,7 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
         r = mean(r)
 
         # Write Raster as nc file
-        raster::writeRaster(x = readAll(r),
+        raster::writeRaster(x = r,
                             filename = MergedRasterFileName,
                             format = "CDF",
                             overwrite = T)
