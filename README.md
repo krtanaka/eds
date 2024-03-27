@@ -40,7 +40,7 @@ write.csv(eds_parameter, file = file.path("/Users/", Sys.info()[7], "Desktop", "
 # Load example dataset (NCRMP 2010-2022)
 df <- subset(df, region == "MHI")
 
-eds::run_eds(lon = df$lon,
+run_eds(lon = df$lon,
         lat = df$lat,
         unit = df$island,
         time = df$date)
