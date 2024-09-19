@@ -271,7 +271,7 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
 
   options(warn = -1)
 
-  # load("data/SURVEY_MASTER.RData")
+  # load("data/df.rda")
   # df <- subset(df, region == "MHI")
   # # df = df[sample(1:nrow(df), 300, replace = F),]
   # lon = df$lon
