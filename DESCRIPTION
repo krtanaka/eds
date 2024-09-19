@@ -9,8 +9,22 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Imports: 
-    magrittr
+Imports:
+    raster,
+    foreach,
+    doParallel,
+    parallel,
+    ncdf4,
+    RNetCDF,
+    lubridate,
+    abind,
+    dplyr,
+    sp,
+    utils,
+    stats,
+    plyr,
+    zoo,
+    data.table
 URL: https://github.com/krtanaka/eds
 BugReports: https://github.com/krtanaka/eds/issues
 Depends: 
