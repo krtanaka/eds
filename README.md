@@ -20,7 +20,7 @@ devtools::install_github("krtanaka/eds")
 ``` r
 library(eds)
 
-# Create a data frame with the provided data
+# Define the parameters required for the EDS. This data frame includes information about each dataset to be downloaded and processed.
 eds_parameter <- data.frame(
   Dataset = c("Bathymetry_ETOPO_2022_v1_15s", "Sea_Surface_Temperature_OISST_Monthly"),
   Download = c("YES", "YES"),
