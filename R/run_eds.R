@@ -895,9 +895,9 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
             "points out of", nrow(df),
             "entered points due to being outside of the geographic scope.\n"))
 
-df = subset(df, DATA_UNIT != "NONE_ASSIGNED")
-df = df[!(is.na(df$lat) & is.na(df$lon)) & !is.na(df$date_r), ]
-df = df[!duplicated(df[c("lat", "lon", "date_r")]), ]
+  df = subset(df, DATA_UNIT != "NONE_ASSIGNED")
+  df = df[!(is.na(df$lat) & is.na(df$lon)) & !is.na(df$date_r), ]
+  df = df[!duplicated(df[c("lat", "lon", "date_r")]), ]
 
   # List of spatial units
   unique_units = sort(unique(df$DATA_UNIT)); unique_units
@@ -965,12 +965,12 @@ df = df[!duplicated(df[c("lat", "lon", "date_r")]), ]
 
       # Locate all points in rawvar array, flagging any out of bound with NA in "ijk"
       ijk = xyt_to_ijk(xyt_df = as.data.frame(xyt_df_i[df_i,c("lon","lat","date_r")]),
-                    x_grid = lon,
-                    y_grid = lat,
-                    t_grid = t,
-                    lon = lon,
-                    lat = lat,
-                    t = t)
+                       x_grid = lon,
+                       y_grid = lat,
+                       t_grid = t,
+                       lon = lon,
+                       lat = lat,
+                       t = t)
       ijk
 
       # Check for any out of bound points (stored as NA), we want to drop them from both ijk and df_i
@@ -1248,5 +1248,7 @@ df = df[!duplicated(df[c("lat", "lon", "date_r")]), ]
   options(warn = 0)
 
   cat("\nEDS run has been successfully completed.\n")
+  cat("climatology output saved to:", file.path(eds_path, "eds_clim.RData"), "\n")
+  cat("temporally summarized output saved to:", file.path(eds_path, "eds_time.RData"), "\n")
 
 }
