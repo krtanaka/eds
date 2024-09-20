@@ -17,8 +17,6 @@ devtools::install_github("krtanaka/eds")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ``` r
 library(eds)
 
