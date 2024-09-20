@@ -1,5 +1,35 @@
-#' importFrom(stats, complete.cases, filter, quantile, var)
-#' importFrom(utils, head, install.packages, read.csv, tail)
+#' Run Environmental Data Synthesis (EDS)
+#'
+#' Downloads and processes environmental netCDF files based on provided parameters.
+#' This function merges multiple netCDF files into a single file and extracts relevant
+#' climatological and time-series data for specified geographic points.
+#'
+#' @param lon Numeric vector of longitudes for the data points.
+#' @param lat Numeric vector of latitudes for the data points.
+#' @param unit Character vector specifying the unit (e.g., island name) for each point.
+#' @param time Vector of dates corresponding to each data point.
+#' @param buffer Numeric value specifying the buffer distance for spatial operations. Default is 0.25.
+#'
+#' @return The function writes merged netCDF files and saves extracted climatological
+#' and time-series data to specified directories. It returns `NULL` invisibly.
+#'
+#' @details
+#' The `run_eds` function performs the following steps:
+#' \enumerate{
+#'   \item Downloads netCDF files from specified ERDDAP servers.
+#'   \item Merges individual netCDF files into a single file per dataset.
+#'   \item Extracts climatological data using spatial extraction methods.
+#'   \item Extracts time-series data for each point and applies summary statistics.
+#' }
+#'
+#' @importFrom raster raster crs<- merge writeRaster as.data.frame shift crs extent rotate
+#' @importFrom sp coordinates
+#' @importFrom foreach foreach %dopar% %do%
+#' @importFrom doParallel registerDoParallel stopImplicitCluster
+#' @importFrom methods slot
+#' @importFrom stats complete.cases quantile var
+#' @importFrom utils head install.packages read.csv tail
+#'
 #' @export
 
 run_eds = function(lon, lat, unit, time, buffer = 0.25) {
@@ -362,7 +392,7 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
 
   for (iP in 1:length(uP)){
 
-    # iP = 2
+    # iP = 1
 
     # Select dataset
     thisp = subset(ParamDF, Dataset == uP[iP])
@@ -499,27 +529,38 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
         # skip if previous step fails to produce summary .nc files
         if (length(ILnc) == 0) next
 
-        # Set number of parallel workers
-        num_workers <- detectCores()/2  # Adjust the number of workers based on your system's capacity
+        # Read each netCDF file into a RasterLayer and set the CRS
+        raster_list <- lapply(ILnc, function(nc_file) {
+          r <- raster::raster(nc_file)
+          crs(r) <- "+proj=longlat +datum=WGS84"  # Set CRS if necessary
+          return(r)
+        })
 
-        # Register parallel backend
-        cl <- makeCluster(num_workers)
-        registerDoParallel(cl)
+        # Merge all RasterLayers into one
+        # merged_raster <- do.call(merge, raster_list)
+        r <- do.call(merge, c(raster_list, fun = mean))
 
-        # Load and merge raster files using parallel processing
-        r <- foreach(i = 1:length(ILnc), .combine = merge, .packages = c("raster")) %dopar% {
-
-          r <- raster(ILnc[i])
-          crs(r) <- "+proj=longlat +datum=WGS84"
-          r
-
-        }
-
-        # Stop parallel processing and clean up
-        stopCluster(cl)
-        registerDoSEQ()
-
-        r = mean(r)
+        # # Set number of parallel workers
+        # num_workers <- detectCores()/2  # Adjust the number of workers based on your system's capacity
+        #
+        # # Register parallel backend
+        # cl <- makeCluster(num_workers)
+        # registerDoParallel(cl)
+        #
+        # # Load and merge raster files using parallel processing
+        # r <- foreach(i = 1:length(ILnc), .combine = merge, .packages = c("raster")) %dopar% {
+        #
+        #   r <- raster(ILnc[i])
+        #   crs(r) <- "+proj=longlat +datum=WGS84"
+        #   r
+        #
+        # }
+        #
+        # # Stop parallel processing and clean up
+        # stopCluster(cl)
+        # registerDoSEQ()
+        #
+        # r = mean(r)
 
         # Write Raster as nc file
         raster::writeRaster(x = r,

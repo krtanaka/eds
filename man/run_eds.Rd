@@ -2,12 +2,36 @@
 % Please edit documentation in R/run_eds.R
 \name{run_eds}
 \alias{run_eds}
-\title{importFrom(stats, complete.cases, filter, quantile, var)
-importFrom(utils, head, install.packages, read.csv, tail)}
+\title{Run Environmental Data Synthesis (EDS)}
 \usage{
 run_eds(lon, lat, unit, time, buffer = 0.25)
 }
+\arguments{
+\item{lon}{Numeric vector of longitudes for the data points.}
+
+\item{lat}{Numeric vector of latitudes for the data points.}
+
+\item{unit}{Character vector specifying the unit (e.g., island name) for each point.}
+
+\item{time}{Vector of dates corresponding to each data point.}
+
+\item{buffer}{Numeric value specifying the buffer distance for spatial operations. Default is 0.25.}
+}
+\value{
+The function writes merged netCDF files and saves extracted climatological
+and time-series data to specified directories. It returns \code{NULL} invisibly.
+}
 \description{
-importFrom(stats, complete.cases, filter, quantile, var)
-importFrom(utils, head, install.packages, read.csv, tail)
+Downloads and processes environmental netCDF files based on provided parameters.
+This function merges multiple netCDF files into a single file and extracts relevant
+climatological and time-series data for specified geographic points.
+}
+\details{
+The \code{run_eds} function performs the following steps:
+\enumerate{
+\item Downloads netCDF files from specified ERDDAP servers.
+\item Merges individual netCDF files into a single file per dataset.
+\item Extracts climatological data using spatial extraction methods.
+\item Extracts time-series data for each point and applies summary statistics.
+}
 }
