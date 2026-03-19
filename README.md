@@ -1,5 +1,5 @@
 
-# Environmental Data Summaries (EDS)
+# Environmental Data Summary (EDS)
 
 <!-- badges: start -->
 <!-- badges: end -->
