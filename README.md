@@ -1,10 +1,10 @@
 
-# eds
+# Environmental Data Summaries (EDS)
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The eds package provides an automated framework for the spatiotemporal co-location and temporal summarization of gridded satellite and oceanographic model datasets with time-stamped and georeferenced field observations. It is designed to bridge the gap between biological surveys (e.g., in situ fish or coral counts) and the environmental conditions that drive ecosystem dynamics.
+The EDS package provides an automated framework for the spatiotemporal co-location and temporal summarization of gridded satellite and oceanographic model datasets with time-stamped and georeferenced field observations. It is designed to bridge the gap between biological surveys (e.g., in situ fish or coral counts) and the environmental conditions that drive ecosystem dynamics.
 
 Rather than relying on broad regional averages, eds automates the extraction of localized environmental data for specific survey coordinates and timestamps.
 
