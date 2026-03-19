@@ -30,7 +30,7 @@ devtools::install_github("krtanaka/eds")
 ``` r
 library(eds)
 
-# Define the parameters required for the EDS. This data frame includes information about each dataset to be downloaded and processed.
+# Configure the target environmental datasets and desired summary metrics
 eds_parameter <- data.frame(
   Dataset = c("Bathymetry_ETOPO_2022_v1_15s", "Sea_Surface_Temperature_OISST_Monthly"),
   Download = c("YES", "YES"),
@@ -42,12 +42,13 @@ eds_parameter <- data.frame(
   Mask = c(FALSE, FALSE)
 )
 
-# Save the data frame to a CSV file on the desktop
+# Export the parameter configuration to a local CSV file
 write.csv(eds_parameter, file = file.path("/Users/", Sys.info()[7], "Desktop", "eds_parameters.csv"), row.names = FALSE)
 
-# Load example dataset (NCRMP 2010-2022)
+# Filter example survey data (e.g., NCRMP 2010-2022) by region
 df <- subset(df, region == "MHI")
 
+# Execute the spatiotemporal matching and extraction framework
 run_eds(lon = df$lon,
         lat = df$lat,
         unit = df$island,
