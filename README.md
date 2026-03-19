@@ -6,16 +6,15 @@
 
 The EDS package provides an automated framework for the spatiotemporal co-location and temporal summarization of gridded satellite and oceanographic model datasets with time-stamped and georeferenced field observations. It is designed to bridge the gap between biological surveys (e.g., in situ fish or coral counts) and the environmental conditions that drive ecosystem dynamics.
 
-Rather than relying on broad regional averages, eds automates the extraction of localized environmental data for specific survey coordinates and timestamps.
+Rather than relying on broad regional averages, EDS automates the extraction of localized environmental data for specific survey coordinates and timestamps.
 
 Core Capabilities:
 
 Data Integration: Seamlessly merges field survey data with hundreds of external environmental datasets. Supported variables include Sea Surface Temperature (SST), Chlorophyll-a (Chl-a), Photosynthetically Active Radiation (PAR), Turbidity (Kd490), Wave Height, Precipitation, Population Density, and Effluent.
 
-Temporal Summarization: Ecosystems are shaped by past conditions, not just a single-day snapshot. eds calculates the exact environmental conditions leading up to your survey date using customizable time windows (e.g., the previous 7 days, 30 days, or 10 years).
+Temporal Summarization: Ecosystems are shaped by past conditions, not just a single-day snapshot. EDS calculates the exact environmental conditions leading up to your survey date using customizable time windows (e.g., the previous 7 days, 30 days, or 10 years).
 
 Automated Metrics: Computes standard historical summaries (Mean, Standard Deviation, Maximum, Minimum, Median, and Sum) to format the extracted environmental data into an analysis-ready structure for ecological and statistical modeling.
-
 
 ## Installation
 
