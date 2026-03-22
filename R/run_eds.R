@@ -459,53 +459,46 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
         # ii = 1
 
         # Select unit's data
-        this_unit = subset(bbox, unit == uI[ii])
+        this_unit <- subset(bbox, unit == uI[ii])
 
-        # Get appropriate Longitude span
-        if (long180or360 == 360){
-
-          this_unit[, c("x_min", "x_max")] = ifelse(this_unit[, c("x_min", "x_max")] < 0,
-                                                    this_unit[, c("x_min", "x_max")] + 360,
-                                                    this_unit[, c("x_min", "x_max")])
-
-          thislong = this_unit[, c("x_min","x_max")]
-
+        # Get appropriate Longitude span and force to numeric vector
+        if (long180or360 == 360) {
+          # Convert to 0-360 range if needed
+          lon_vals <- c(this_unit$x_min, this_unit$x_max)
+          thislong <- ifelse(lon_vals < 0, lon_vals + 360, lon_vals)
         } else {
-
-          thislong = this_unit[, c("x_min","x_max")]
-
+          # Simple numeric vector for -180 to 180
+          thislong <- c(this_unit$x_min, this_unit$x_max)
         }
 
-        # Make a griddap call to pull data from server
-        targetfilename = paste0(pib_path, "/",
-                                this_unit$unit, "_",
-                                thisp$Dataset, ".nc")
+        # Force Latitude to a simple numeric vector
+        thislat <- c(this_unit$y_min, this_unit$y_max)
 
-        if (!file.exists(targetfilename)){
+        # Construct target filename
+        targetfilename <- file.path(pib_path, paste0(this_unit$unit, "_", thisp$Dataset, ".nc"))
 
+        # Make the call
+        if (!file.exists(targetfilename)) {
           tryCatch({
+            # Download file
+            thisIP <- griddap(
+              datasetx  = thisp$Dataset_ID,
+              url       = thisp$URL,
+              fields    = thisp$Fields,
+              longitude = thislong, # Now a clean numeric vector
+              latitude  = thislat,  # Now a clean numeric vector
+              fmt       = "nc",
+              store     = disk(path = pib_path)
+            )
 
-            thisIP = griddap(datasetx = thisp$Dataset_ID,
-                             url = thisp$URL,
-                             fields = c(thisp$Fields),
-                             longitude = thislong,
-                             latitude = this_unit[, c("y_min","y_max")],
-                             fmt = "nc",
-                             store = disk(path = pib_path))
+            # Rename from the temp disk cache name to your target name
+            file.rename(thisIP$summary$filename, targetfilename)
 
-            ncstatus = file.rename(thisIP$summary$filename,
-                                   targetfilename)
-
-            cat(paste0("Spatial unit", this_unit$unit,
-                       " written to disk. ",
-                       ii,
-                       ' of ',
-                       length(uI), "\n"))
+            cat(paste0("Spatial unit ", this_unit$unit,
+                       " written to disk. ", ii, " of ", length(uI), "\n"))
 
           }, error = function(e) {
-
-            cat(paste0(e$message, ". Skipping ", this_unit$unit, "...\n"))
-
+            cat(paste0("Error in unit ", this_unit$unit, ": ", e$message, ". Skipping...\n"))
           })
         }
 
@@ -589,48 +582,47 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
         # ii = 1
 
         # Select unit's bounding box data
-        this_unit = subset(bbox, unit == uI[ii])
+        this_unit <- subset(bbox, unit == uI[ii])
 
-        # Check if any files match the pattern
-        if (length(list.files(paste0(paramoutpath, "/Unit_Level_Data/"), pattern = this_unit$unit)) > 0) {
+        # Check if file already exists to skip redundant downloads
+        targetfilename <- file.path(pib_path, paste0(this_unit$unit, "_", thisp$Dataset_ID, ".nc"))
 
-          cat(paste0("NetCDF files for ", this_unit$unit, " already exists.\n"))
+        if (file.exists(targetfilename)) {
+          cat(paste0("NetCDF file for ", this_unit$unit, " already exists. Skipping...\n"))
           next
-
         }
 
-        # Get appropriate Longitude span
-        if (long180or360 == 360){
-
-          this_unit[, c("x_min", "x_max")] = ifelse(this_unit[, c("x_min", "x_max")] < 0,
-                                                    this_unit[, c("x_min", "x_max")] + 360,
-                                                    this_unit[, c("x_min", "x_max")])
-
-          thislong = this_unit[, c("x_min","x_max")]
-
+        # 3. Format Longitude (Force to numeric vector)
+        lon_vals <- as.numeric(c(this_unit$x_min, this_unit$x_max))
+        if (long180or360 == 360) {
+          # Convert negative longitudes to 0-360 range
+          thislong <- ifelse(lon_vals < 0, lon_vals + 360, lon_vals)
         } else {
-
-          thislong = this_unit[, c("x_min","x_max")]
-
+          thislong <- lon_vals
         }
 
-        # call griddap() to pull test data from server
-        # skip if an unit is outside of data range
+        # Ensure longitude is in ascending order: c(min, max)
+        thislong <- sort(thislong)
+
+        # Format Latitude (Force to numeric vector)
+        thislat <- sort(as.numeric(c(this_unit$y_min, this_unit$y_max)))
+
+        # Make the griddap call
+        cat(paste0("Processing unit ", this_unit$unit, " (", ii, " of ", length(uI), ")... "))
+
         testIP <- tryCatch({
-
-          griddap(datasetx = thisp$Dataset_ID,
-                  url = thisp$URL,
-                  fields = c(trim(thisp$Fields)),
-                  time = c('last', 'last'),
-                  longitude = thislong,
-                  latitude = this_unit[, c("y_min", "y_max")],
-                  store = memory())
-
+          griddap(
+            datasetx  = thisp$Dataset_ID,
+            url       = thisp$URL,
+            fields    = trimws(thisp$Fields),
+            time      = c('last', 'last'),
+            longitude = thislong,
+            latitude  = thislat,
+            store     = memory() # This keeps it out of your folder
+          )
         }, error = function(e) {
-
-          cat("GRIDDAP ERROR...\n")
+          cat(paste0("\nGRIDDAP ERROR: ", e$message, "\n"))
           return(NULL)
-
         })
 
         if (is.null(testIP)) {
@@ -704,6 +696,8 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
         # Create a list of indices for parallel processing
         indices <- 1:Nblocks
 
+        thislat_vec <- sort(as.numeric(c(this_unit$y_min, this_unit$y_max)))
+
         # Parallel loop
         foreach(blockI = indices, .packages = c("lubridate", "rerddap")) %dopar% {
 
@@ -721,8 +715,8 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
                                   this_start, "_",
                                   this_end, ".nc")
 
-          this_start = as.character(this_start)
-          this_end = as.character(this_end)
+          this_start_val = as.character(floor_date(ts_start + (blockI-1) * block_step, unit = "day"))
+          this_end_val   = as.character(floor_date(ts_start + ((blockI) * block_step) - timestep, unit = "day"))
 
           # If the targetfile doesn't already exist, call griddap
           if (!file.exists(targetfilename)) {
@@ -734,15 +728,17 @@ run_eds = function(lon, lat, unit, time, buffer = 0.25) {
 
               tryCatch({
 
-                thisIP = griddap(datasetx = thisp$Dataset_ID,
-                                 url = thisp$URL,
-                                 fields = c(thisp$Fields),
-                                 time = c(this_start, this_end),
-                                 longitude = thislong,
-                                 latitude = this_unit[, c("y_min", "y_max")],
-                                 fmt = "nc",
-                                 store = disk(path = pib_path),
-                                 read = TRUE)
+                thisIP = griddap(
+                  datasetx  = thisp$Dataset_ID,
+                  url       = thisp$URL,
+                  fields    = c(thisp$Fields),
+                  time      = c(this_start_val, this_end_val),
+                  longitude = thislong,
+                  latitude  = thislat_vec, # FIXED: Using the numeric vector
+                  fmt       = "nc",
+                  store     = disk(path = pib_path),
+                  read      = TRUE
+                )
 
                 continue_loop = FALSE # If no error occurs, set continue_loop to FALSE to exit the loop
 
