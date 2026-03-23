@@ -26,12 +26,3 @@ Downloads and processes environmental netCDF files based on provided parameters.
 This function merges multiple netCDF files into a single file and extracts relevant
 climatological and time-series data for specified geographic points.
 }
-\details{
-The \code{run_eds} function performs the following steps:
-\enumerate{
-\item Downloads netCDF files from specified ERDDAP servers.
-\item Merges individual netCDF files into a single file per dataset.
-\item Extracts climatological data using spatial extraction methods.
-\item Extracts time-series data for each point and applies summary statistics.
-}
-}
