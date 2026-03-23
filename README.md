@@ -45,7 +45,7 @@ eds_parameter <- data.frame(
 # Export the parameter configuration to a local CSV file
 write.csv(eds_parameter, file = file.path("/Users/", Sys.info()[7], "Desktop", "eds_parameters.csv"), row.names = FALSE)
 
-# Filter example survey data (e.g., NCRMP 2010-2022) by region
+# Example field observations
 df <- subset(df, region == "MHI")
 
 # Execute the spatiotemporal matching and extraction framework
